@@ -1,0 +1,28 @@
+{
+	"team1Colors":
+	{
+		"R": 225,
+		"G": 225,
+		"B": 225
+	},
+
+	"team2Colors":
+	{
+		"R": 20,
+		"G": 10,
+		"B": 105
+	},
+
+	"refColors":
+	{
+		"R": 0,
+		"G": 225,
+		"B": 225
+	},
+
+    "poseParams": 
+    {
+    	"bodyRatio": 2.67
+    }
+
+}
