@@ -14,40 +14,38 @@ import os
 import warnings
 warnings.filterwarnings("ignore")
 
-video_name = 'NapoliVSBarca.mp4'
+#Image folder path
 base_path = '/home/ameya/Projects/Offside_Detection_Final/Offside/pose_estimation/image_data/filtered_images/'
 tempFileNames = os.listdir(base_path)
 fileNames = []
 for fileName in tempFileNames:
     fileNames.append(base_path+str(fileName))
 
+#Output image paths
 vanishing_point_viz_base_path = base_path+'vp/'
 pose_estimation_viz_base_path = base_path+'pe/'
 team_classification_viz_base_path = base_path+'tc/'
 offside_viz_base_path = base_path+'final/'
 
-keeper_messi = [3.040179005739858e-06, 1.5464113990235211e-06, 5.593402932638267e-07, 1.5200895028699289e-05, 0.0018484288354898336, 0.0004773081039011577, 1.0, 0.36229205175600737, 0.08317929759704251]
-referee_messi = [8.100248677634403e-07, 3.5236081747709655e-05, 5.872680291284942e-06, 0.005813953488372093, 0.0009161381254404509, 0.0011627906976744186, 1.0, 0.13953488372093023, 0.16279069767441862]
+#Direction of goal
+goalDirection = 'right'
 
-keeper_ucl = [4.4931905696916325e-06, 4.450801979411523e-06, 5.510516736414265e-07, 0.00021567314734519837, 0.002188183807439825, 0.0015186984125557716, 0.7527352297592997, 1.0, 0.20787746170678337]
-referee_ucl = [8.72783130847647e-06, 1.5868784197229944e-07, 0.0, 0.0010298840944002235, 0.0002880184331797235, 0.002688172043010753, 0.3064516129032258, 0.05913978494623656, 1.0]
+keeper = [4.4931905696916325e-06, 4.450801979411523e-06, 5.510516736414265e-07, 0.00021567314734519837, 0.002188183807439825, 0.0015186984125557716, 0.7527352297592997, 1.0, 0.20787746170678337]
+referee = [8.72783130847647e-06, 1.5868784197229944e-07, 0.0, 0.0010298840944002235, 0.0002880184331797235, 0.002688172043010753, 0.3064516129032258, 0.05913978494623656, 1.0]
 
 
 for file_itr in range(len(fileNames)):
-	if fileNames[file_itr].find(video_name) == -1:
-		continue
 	print('\n\n', fileNames[file_itr])
 	# calculate vanishing points
 	imageForVanishingPoints = cv2.imread(fileNames[file_itr])
-	vertical_vanishing_point = get_vertical_vanishing_point(imageForVanishingPoints, 'right')
+	vertical_vanishing_point = get_vertical_vanishing_point(imageForVanishingPoints, goalDirection)
 	horizontal_vanishing_point = get_horizontal_vanishing_point(imageForVanishingPoints)
 	# cv2.imwrite(vanishing_point_viz_base_path+tempFileNames[file_itr], imageForVanishingPoints)
 	print('Finished Vanishing Point calculation')
 	# get pose estimaitons and team classifications
 	imageForPoseEstimation = cv2.imread(fileNames[file_itr])
 	imageForPoseEstimation_2 = imread(fileNames[file_itr], mode='RGB')
-	goalDirection = 'right'
-	pose_estimations, isKeeperFound, isRefFound, temp_image = PoseGetter.return_pose(imageForPoseEstimation_2, imageForPoseEstimation, keeper_ucl, referee_ucl)
+	pose_estimations, isKeeperFound, isRefFound, temp_image = PoseGetter.return_pose(imageForPoseEstimation_2, imageForPoseEstimation, keeper, referee)
 	cv2.imwrite(base_path+'sub/'+tempFileNames[file_itr], temp_image)
 	pose_estimations = sorted(pose_estimations, key=lambda x : x[-1][0])
 	pose_estimations = update_pose_left_most_point(vertical_vanishing_point, horizontal_vanishing_point, pose_estimations, imageForPoseEstimation, goalDirection)
